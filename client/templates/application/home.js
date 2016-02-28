@@ -1,6 +1,16 @@
 Template.home.helpers({
   docks: function () {
     return Docks.find({});
+  },
+  places: function () {
+    //return Places.find({});
+    // Fuck it.
+    return [
+      { "dockName": "D1", "boatLicensePlate": "BLAHBLAH" },
+      { "dockName": "D2", "boatLicensePlate": "DERPDERP" },
+      { "dockName": "D3", "boatLicensePlate": "-" },
+      { "dockName": "D4", "boatLicensePlate": "OMGBBQ" }
+    ];
   }
 });
 
@@ -33,6 +43,14 @@ Template.map.onCreated(function() {
     });
 
     var markers = {};
+    var updateBounds = function() {
+      var bounds = new google.maps.LatLngBounds();
+      var keys = Object.keys(markers);
+      for (i=0; i<keys.length; ++i) {
+        bounds.extend(markers[keys[i]].position);
+      }
+      map.instance.fitBounds(bounds);
+    }
 
     Boats.find().observe({  
       added: function(boat) {
@@ -43,18 +61,19 @@ Template.map.onCreated(function() {
           animation: google.maps.Animation.DROP,
           position: latLng,
           map: map.instance,
-          id: boat._id
+          id: boat._id,
+          icon: "/boat-10-xxl.png",
+          title: boat.licensePlate
         });
         map.instance.panTo(latLng);
-        map.instance.setZoom(12);
-
         markers[boat._id] = marker;
+        updateBounds();
       },
       changed: function(boat) {
         console.log("Boat updated on map", boat.licensePlate, boat.lat, boat.lng);
         var latLng = new google.maps.LatLng(boat.lat, boat.lng);
         markers[boat._id].setPosition(latLng);
-        map.instance.panTo(latLng);
+        updateBounds();
       },
     });
   });

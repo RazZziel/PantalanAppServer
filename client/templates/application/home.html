@@ -1,20 +1,52 @@
 <template name="home">
-    {{> map}}
+  <div class="row">
+    <div class="col-md-7">
+      <h2>Boats nearby</h2>
+      {{> map}}
+    </div>
 
-    <table class="table table-striped">
-      <tr>
-        <th>Booking</th>
-        <th>Boat</th>
-        <th>License plate</th>
-        <th>Owner</th>
-        <th>Sailor</th>
-      </tr>
-      <tbody>
-        {{#each docks}}
-          {{> dock}}
-        {{/each}}
-      </tbody>
-    </table>
+    <div class="col-md-5">
+      <h2>Dock occupation</h2>
+      <img src="/marina-plan1.jpg" style="max-height:500px;"/>
+    </div>
+  </div>
+
+  <br/>
+
+  <div class="row">
+    <div class="col-md-7">
+      <h2>Bookings</h2>
+      <table class="table table-striped">
+        <tr>
+          <th>Booking</th>
+          <th>Boat</th>
+          <th>License plate</th>
+          <th>Owner</th>
+          <th>Sailor</th>
+        </tr>
+        <tbody>
+          {{#each docks}}
+            {{> dock}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-5">
+      <h2>Dock status</h2>
+      <table class="table table-striped">
+        <tr>
+          <th>Dock</th>
+          <th>Boat</th>
+        </tr>
+        <tbody>
+          {{#each places}}
+            {{> place}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <template name="dock">
@@ -25,6 +57,13 @@
     <td>{{ownerName}}</td>
     <td><input type="checkbox" onclick="return false;" checked="{{withSailor}}"/></td>
     <td><button class="delete">&times;</button></td>
+  </tr>
+</template>
+
+<template name="place">
+  <tr>
+    <td>{{dockName}}</td>
+    <td>{{boatLicensePlate}}</td>
   </tr>
 </template>
 
