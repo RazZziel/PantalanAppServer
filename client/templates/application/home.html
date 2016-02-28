@@ -1,0 +1,33 @@
+<template name="home">
+    {{> map}}
+
+    <table class="table table-striped">
+      <tr>
+        <th>Booking</th>
+        <th>Boat</th>
+        <th>License plate</th>
+        <th>Owner</th>
+        <th>Sailor</th>
+      </tr>
+      {{#each docks}}
+        {{> dock}}
+      {{/each}}
+    </table>
+</template>
+
+<template name="dock">
+  <tr>
+    <td>{{dateTime}}</td>
+    <td><strong>{{boatName}}</strong></td>
+    <td>{{boatLicensePlate}}</td>
+    <td>{{ownerName}}</td>
+    <td><input type="checkbox" onclick="return false;" checked="{{withSailor}}"/></td>
+    <button class="delete">&times;</button>
+  </tr>
+</template>
+
+<template name="map">  
+  <div class="map-container">
+    {{> googleMap name="map" options=mapOptions}}
+  </div>
+</template>
