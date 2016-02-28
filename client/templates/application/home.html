@@ -9,9 +9,11 @@
         <th>Owner</th>
         <th>Sailor</th>
       </tr>
-      {{#each docks}}
-        {{> dock}}
-      {{/each}}
+      <tbody>
+        {{#each docks}}
+          {{> dock}}
+        {{/each}}
+      </tbody>
     </table>
 </template>
 
@@ -22,7 +24,7 @@
     <td>{{boatLicensePlate}}</td>
     <td>{{ownerName}}</td>
     <td><input type="checkbox" onclick="return false;" checked="{{withSailor}}"/></td>
-    <button class="delete">&times;</button>
+    <td><button class="delete">&times;</button></td>
   </tr>
 </template>
 

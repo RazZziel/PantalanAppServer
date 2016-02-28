@@ -1,7 +1,3 @@
-Meteor.startup(function() {  
-  GoogleMaps.load();
-});
-
 Template.home.helpers({
   docks: function () {
     return Docks.find({});
@@ -14,35 +10,52 @@ Template.dock.events({
   }
 });
 
-Template.map.onCreated(function() {  
-  var self = this;
 
+Meteor.startup(function() {  
+  GoogleMaps.load();
+});
+
+Template.map.helpers({  
+  mapOptions: function() {
+    if (GoogleMaps.loaded()) {
+      return {
+        center: new google.maps.LatLng(42.184384, -8.850952),
+        zoom: 8
+      };
+    }
+  }
+});
+
+Template.map.onCreated(function() {
   GoogleMaps.ready('map', function(map) {
-    var marker;
+    google.maps.event.addListener(map.instance, 'click', function(event) {
+      Markers.insert({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+    });
 
-    // Create and move the marker when latLng changes.
-    self.autorun(function() {
-      //var latLng = Geolocation.latLng();
-      var latLng = { "lat": 41.954384, "lng":-2.850952 };
-      if (!latLng)
-        return;
+    var markers = {};
 
-      // If the marker doesn't yet exist, create it.
-      if (! marker) {
-        marker = new google.maps.Marker({
-          position: new google.maps.LatLng(latLng.lat, latLng.lng),
-          map: map.instance
+    Boats.find().observe({  
+      added: function(boat) {
+        console.log("Boat added on map", boat.licensePLate, boat.lat, boat.lng);
+        var latLng = new google.maps.LatLng(boat.lat, boat.lng);
+        var marker = new google.maps.Marker({
+          draggable: true,
+          animation: google.maps.Animation.DROP,
+          position: latLng,
+          map: map.instance,
+          id: boat._id
         });
-      }
-      // The marker already exists, so we'll just change its position.
-      else {
-        marker.setPosition(latLng);
-      }
+        map.instance.panTo(latLng);
+        map.instance.setZoom(12);
 
-      // Center and zoom the map view onto the current position.
-      map.instance.setCenter(marker.getPosition());
-      var MAP_ZOOM = 15;
-      map.instance.setZoom(MAP_ZOOM);
+        markers[boat._id] = marker;
+      },
+      changed: function(boat) {
+        console.log("Boat updated on map", boat.licensePlate, boat.lat, boat.lng);
+        var latLng = new google.maps.LatLng(boat.lat, boat.lng);
+        markers[boat._id].setPosition(latLng);
+        map.instance.panTo(latLng);
+      },
     });
   });
 });
